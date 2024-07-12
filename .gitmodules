@@ -1,0 +1,3 @@
+[submodule "futhark-benchmarks"]
+	path = futhark-benchmarks
+	url = https://github.com/diku-dk/futhark-benchmarks.git

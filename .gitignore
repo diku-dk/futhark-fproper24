@@ -1,0 +1,10 @@
+a100-*.json
+mi100-*.json
+*.prof
+futhark-benchmarks-a100
+futhark-benchmarks-mi100
+*.pdf
+*.datafile
+*.speedups
+*.cleaned
+speedups
