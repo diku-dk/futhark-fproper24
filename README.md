@@ -35,3 +35,4 @@ benchmark suite, and it is discussed below how to do this.
 
 4) [Gnuplot](http://gnuplot.info/).
 
+5) The `sha256sum` executable must be on your `PATH`.
