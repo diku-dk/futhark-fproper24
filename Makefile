@@ -1,8 +1,6 @@
 FUTHARK?=futhark
 BENCHMARKS?=futhark-benchmarks
 
-all: a100-speedups.pdf a100-micro-speedups.pdf mi100-micro-speedups.pdf mi100-speedups.pdf
-
 .SECONDARY:
 
 .PHONY: compare-cuda-opencl compare-hip-opencl
