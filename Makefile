@@ -3,10 +3,13 @@ BENCHMARKS?=futhark-benchmarks
 
 .SECONDARY:
 
-.PHONY: compare-cuda-opencl compare-hip-opencl
+.PHONY: all prepare compare-cuda-opencl compare-hip-opencl
 
-all:
-	echo "Use either 'make cuda-vs-opencl' or 'make hip-vs-opencl'."
+all: prepare
+
+prepare:
+	cd futhark-benchmarks && sh get-data.sh
+	echo "Use either 'make cuda-vs-opencl.pdf' or 'make hip-vs-opencl.pdf'."
 
 cuda-vs-opencl.pdf:
 	$(FUTHARK) bench $(BENCHMARKS) --ignore=/lib/ --backend=cuda --json cuda.json

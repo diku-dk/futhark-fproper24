@@ -37,3 +37,45 @@ benchmark suite, and it is discussed below how to do this.
 4) [Gnuplot](http://gnuplot.info/).
 
 5) The `sha256sum` executable must be on your `PATH`.
+
+## Running
+
+First, do `make prepare` to download the benchmark datasets. This
+takes about 33GiB of space. You only need to do this once.
+
+### With an NVIDIA GPU
+
+Run `make cuda-vs-opencl.pdf` to benchmark with CUDA, then with OpenCL,
+and finally produce a speedup graph similar to Figure 2a of the paper.
+
+### With an AMD GPU
+
+Run `make hip-vs-opencl.pdf` to benchmark with HIP, then with OpenCL,
+and finally produce a speedup graph similar to Figure 2b of the paper.
+
+### Manually
+
+The following instructions are useful if you want to adapt the
+experimental infrastructure to new backends or different sets of
+benchmarks.
+
+The `plot-speedups.sh` script is what ultimately does the plotting. It
+is run as follows:
+
+
+```
+$ ./plot-speedups.sh FOO.json BAR.json GRAPH.pdf
+```
+
+Where `FOO.json` and `BAR.json` are JSON files produced by the
+`--json` option of the `futhark bench` tool. An example is:
+
+```
+$ futhark bench futhark-benchmarks --ignore=/lib/ --backend=cuda --json cuda.json
+```
+
+The `plot-speedups.sh` script contains some logic for disregarding
+benchmarks that were not included in the paper, although results for
+these are still present in the JSON files produced by `futhark bench`.
+You can edit the `plot-speedups.sh` script to change which benchmarks
+are plotted.
