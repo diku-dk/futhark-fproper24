@@ -9,7 +9,7 @@ results.
 
 There is no attempt at automatically analysing the *cause* of
 performance differences - this remains a (very) laborious manual
-process - although some notes on the procedure is listed below.
+process - although some notes on the procedure can be found below.
 
 The benchmark suite is included as a Git submodule, pinned to a
 specific commit. It will work with **Futhark 0.25.17**, which was also
@@ -20,7 +20,8 @@ benchmark suite, and it is discussed below how to do this.
 ## Dependencies
 
 1) An appropriate version of the Futhark compiler must be available in
-   your `PATH`. The paper used 0.25.17.
+   your `PATH`. The paper used 0.25.17. [See this directory of
+   Futhark tarballs.](https://futhark-lang.org/releases/)
 
 2) Your system (realistically, Linux) must have a correctly setup
    OpenCL installation, and either CUDA or HIP as well. By "correctly
