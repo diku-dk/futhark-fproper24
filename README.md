@@ -79,3 +79,88 @@ benchmarks that were not included in the paper, although results for
 these are still present in the JSON files produced by `futhark bench`.
 You can edit the `plot-speedups.sh` script to change which benchmarks
 are plotted.
+
+You can also run `futhark benchcmp FOO.json BAR.json` to obtain a
+textual speedup comparison of each benchmark and workload (including
+differences in memory usage).
+
+## Investigating
+
+As stated above, investigating the source of performance differences
+is a manual process. The following describes some tricks for doing so.
+
+Each benchmark is investigated individually. Suppose we are
+investigating `futhark-benchmarks/accelerate/nbody/nbody.fut`. First
+we go to its directory (`futhark-benchmarks/accelerate`) and re-run
+the benchmark to ensure that we have an up-to-date compiled binary:
+
+```
+$ futhark bench --backend=opencl nbody.fut   # or whichever backend you want
+```
+
+This generates an executable `nbody`. While the Futhark compiler
+itself takes very few options, we can pass kernel compiler options to `nbody`:
+
+* For OpenCL, use `--build-option`.
+
+* For CUDA, use `--nvrtc-option`.
+
+* For HIP, use `--build-option`.
+
+When using `futhark bench`, these can be passed to the executable via
+`--pass-option`. For example, to demonstrate that the high performance
+of OpenCL on the `nbody` benchmark was due to differing numerical
+defaults, we can use this command:
+
+```
+$ futhark bench --backend=opencl nbody.fut --pass-option=--build-option=-cl-fp32-correctly-rounded-divide-sqrt
+```
+
+### Inspecting GPU source code
+
+The file `nbody.c` contains host code, but usually it is the GPU code
+we are interested in. This is also present in `nbody.c`, but as a
+hard-to-read string literal. Instead, we can ask `nbody` to dump its
+embedded GPU source code to a file:
+
+* For OpenCL, use `--dump-opencl=kernels.cl`.
+
+* For CUDA, use `--dump-cuda=kernels.cu`
+
+* For HIP, use `--dump-hip=kernels.hip`.
+
+These options should be passed by running `nbody` directly, rather
+than through `futhark bench`.
+
+It is possible to modify the generated code and instruct the program
+to load GPU code from a file instead of using its embedded code. This
+is done by passing `--load-opencl`, `--load-cuda`, or `--load-hip` to
+the executable. This must be done through `futhark bench`. For
+example:
+
+```
+$ futhark bench --backend=opencl nbody.fut --pass-option=--load-opencl=kernels.cl
+```
+
+This technique can be useful for investigating the impact of minor (or
+major) differences in code generation.
+
+### Inspecting GPU compiled code
+
+It is also possible to inspect the GPU program after it has been
+run-time-compiled.
+
+* For OpenCL, use `--dump-opencl-binary=FILE`. What is dumped depends
+  on the backend. On an NVIDIA platform, the file will contain PTX
+  code in text format. On an AMD platform, the file will contain
+  binary object code that must be taken apart with a disassembler.
+  (You do not actually want to do this.)
+
+* For CUDA, `--dump-ptx=FILE` dumps the generated PTX code to the
+  provided file.
+
+Dumping the compiled program is not currently supported for the HIP backend.
+
+Similarly to the source code, you can ask the program to load a
+modified compiled program with `--load-opencl-binary` and `--load-ptx`
+for the OpenCL and HIP backends, respectively.
