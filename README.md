@@ -116,6 +116,55 @@ defaults, we can use this command:
 $ futhark bench --backend=opencl nbody.fut --pass-option=--build-option=-cl-fp32-correctly-rounded-divide-sqrt
 ```
 
+### Profiling
+
+To get (relatively) precise information about what happens at runtime,
+we must benchmark with profiling enabled, by passing `--profile` to
+`futhark bench`. This works best with a single program at a time. For
+example, run:
+
+```
+$ futhark bench --backend=opencl nbody.fut --profile --json nbody.json
+```
+
+(This might negatively affect performance, which is why it is not done
+by default.)
+
+Pass the generated `nbody.json` to `futhark profile`:
+
+```
+$ futhark profile nbody.json
+```
+
+This produces a directory `nbody.prof` with a set of files for every workload:
+
+```
+$ tree nbody.prof/
+nbody.prof/
+├── data_100000-bodies.in.log
+├── data_100000-bodies.in.summary
+├── data_100000-bodies.in.timeline
+├── data_10000-bodies.in.log
+├── data_10000-bodies.in.summary
+├── data_10000-bodies.in.timeline
+├── data_1000-bodies.in.log
+├── data_1000-bodies.in.summary
+└── data_1000-bodies.in.timeline
+
+0 directories, 9 files
+```
+
+* The `.log` file contains a running log of what is going on during a
+  single execution of the program for the given dataset.
+
+* The `.summary` file contains a table of each GPU cost centre
+  (kernels and copies). There is currently no straightforward way to
+  connect this information to the original source code.
+
+* The `.timeline` file is largely abbreviated form of the `.log` file,
+  containing only information about GPU events, but also including
+  their runtime.
+
 ### Inspecting GPU source code
 
 The file `nbody.c` contains host code, but usually it is the GPU code
