@@ -8,7 +8,7 @@ BENCHMARKS?=futhark-benchmarks
 all: prepare
 
 prepare:
-	cd futhark-benchmarks && sh get-data.sh
+	cd futhark-benchmarks && sh get-data.sh external-data.txt
 	echo "Use either 'make cuda-vs-opencl.pdf' or 'make hip-vs-opencl.pdf'."
 
 cuda-vs-opencl.pdf:
